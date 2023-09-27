@@ -1,15 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
+import 'react-native-gesture-handler';
 import React from 'react'
-import Splash from './src/screens/Splash'
+import AppNavigator from './src/navigation/AppNavigator';
 
 const App = () => {
   return (
-    
-     <Splash/>
-   
+    <AppNavigator />
   )
 }
 
 export default App
-
-const styles = StyleSheet.create({})

@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const Splash = () => {
-    
+    const navigation = useNavigation();
 
     useEffect(() => {
         setTimeout(() => {
-
+            navigation.replace('Login');
         }, 3000);
     }, [])
     return (
