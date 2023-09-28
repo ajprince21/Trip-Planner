@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator , CardStyleInterpolators, TransitionPresets  } from '@react-navigation/stack';
+import { createStackNavigator, CardStyleInterpolators, TransitionPresets } from '@react-navigation/stack';
 import { useSelector, useDispatch } from 'react-redux';
 import auth from '@react-native-firebase/auth';
 
@@ -10,6 +10,8 @@ import HomeScreen from '../screens/HomeScreen';
 import colors from '../global/colors';
 import { removeUserTokenData, setUserTokenData } from '../store/slice/AuthSlice';
 import TripCreationScreen from '../screens/TripCreationScreen';
+import TripDetailScreen from '../screens/TripDetailScreen';
+import AddTaskScreen from '../screens/AddTaskScreen';
 
 const Stack = createStackNavigator();
 
@@ -30,12 +32,30 @@ function AppStack() {
             }} />
             <Stack.Screen name="CreateTrip" component={TripCreationScreen} options={{
                 title: 'New Trip',
-                headerStyle:{
-                    backgroundColor:colors.primary,
+                headerStyle: {
+                    backgroundColor: colors.primary,
                 },
-                headerTitleAlign:'center',
+                headerTitleAlign: 'center',
                 ...TransitionPresets.ModalSlideFromBottomIOS,
-                headerTintColor:colors.background
+                headerTintColor: colors.background
+            }} />
+            <Stack.Screen name="TripDetail" component={TripDetailScreen} options={{
+                title: 'Trip Details',
+                headerStyle: {
+                    backgroundColor: colors.primary,
+                },
+                headerTitleAlign: 'left',
+                ...TransitionPresets.SlideFromRightIOS,
+                headerTintColor: colors.background
+            }} />
+             <Stack.Screen name="AddTask" component={AddTaskScreen} options={{
+                title: 'Add Task',
+                headerStyle: {
+                    backgroundColor: colors.primary,
+                },
+                headerTitleAlign: 'left',
+                ...TransitionPresets.SlideFromRightIOS,
+                headerTintColor: colors.background
             }} />
         </Stack.Navigator>
     );

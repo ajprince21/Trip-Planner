@@ -1,18 +1,28 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import colors from '../global/colors';
+import { format } from 'date-fns'
+import { useNavigation } from '@react-navigation/native';
 
 const TripCard = ({ trip }) => {
-    const { name, destination, startDate, endDate } = trip;
+    const { tripName, destination, startDate, endDate, id } = trip;
+    const navigation = useNavigation();
+
+    const handleCardPress = () => {
+        navigation.navigate('TripDetail', { trip });
+    };
 
     return (
-        <View style={styles.card}>
-            <Text style={styles.tripName}>{name}</Text>
+        <TouchableOpacity onPress={handleCardPress} style={styles.card}>
+            <Text style={styles.tripName}>{tripName}</Text>
             <Text style={styles.destination}>{destination}</Text>
-            <Text style={styles.dateRange}>
-                {startDate} - {endDate}
-            </Text>
-        </View>
+            {startDate ?
+                <Text style={styles.dateRange}>
+                    {format(new Date(startDate), "dd MMM yy")} - {format(new Date(endDate), "dd MMM yy")}
+                </Text>
+                : <Text>Dates not available</Text>
+            }
+        </TouchableOpacity>
     );
 };
 

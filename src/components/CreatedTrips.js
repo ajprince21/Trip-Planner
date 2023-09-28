@@ -1,61 +1,80 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList } from 'react-native';
-import TripCard from './TripCard ';
 import colors from '../global/colors';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import TripCard from './TripCard ';
 
 
 const CreatedTrips = () => {
-    // Generate sample data with more realistic date values
-    const generateSampleData = () => {
-        const currentDate = new Date();
-        const recentTrips = [];
+    const [recentlyCreatedTrips, setRecentlyCreatedTrips] = useState([]);
 
-        for (let i = 1; i <= 10; i++) {
-            const startDate = new Date(currentDate);
-            const endDate = new Date(currentDate);
-            startDate.setDate(currentDate.getDate() - i);
-            endDate.setDate(currentDate.getDate() + i);
+    useEffect(() => {
+        // Fetch trips data from Firestore
+        const fetchTrips = async () => {
+            try {
+                const user = auth().currentUser;
+                if (!user) {
+                    console.error('User not logged in');
+                    return;
+                }
 
-            recentTrips.push({
-                id: i,
-                name: `Trip ${i}`,
-                destination: `Destination ${i}`,
-                startDate: startDate.toLocaleDateString('en-IN'),
-                endDate: endDate.toLocaleDateString('en-IN'),
-            });
-        }
+                const userUid = user.uid;
 
-        return recentTrips;
-    };
+                // Reference to the Firestore collection for trips
+                const tripsCollection = firestore().collection('trips');
 
-    const recentlyCreatedTrips = generateSampleData();
+                // Query trips where userId matches the user's UID
+                const querySnapshot = await tripsCollection.where('userId', '==', userUid).get();
 
+                const trips = [];
+                querySnapshot.forEach((doc) => {
+                    trips.push({
+                        id: doc.id,
+                        ...doc.data(),
+                    });
+                });
+
+                setRecentlyCreatedTrips(trips);
+            } catch (error) {
+                console.error('Error fetching trips:', error);
+            }
+        };
+
+
+        fetchTrips();
+    }, []);
     return (
         <View style={styles.container}>
             <Text style={styles.heading}>Recently Created Trips</Text>
             <FlatList
                 data={recentlyCreatedTrips}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.id}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => <TripCard trip={item} />}
+
             />
+            {recentlyCreatedTrips?.length === 0 &&
+                <Text style={{ padding: 8, textAlign: 'center' }}>No Trip created!</Text>
+            }
+
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 20
+        marginBottom: 20,
     },
     heading: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
-        backgroundColor:colors.dividerLine,
+        backgroundColor: colors.dividerLine,
         width: '100%',
         padding: 8,
-        color: colors.placeholderText
+        color: colors.placeholderText,
     },
 });
 

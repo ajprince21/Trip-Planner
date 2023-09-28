@@ -12,8 +12,8 @@ const TripCreationScreen = ({ navigation }) => {
   const [tripData, setTripData] = useState({
     tripName: '',
     destination: '',
-    startDate: null, // Default to null
-    endDate: null, // Default to null
+    startDate: null,
+    endDate: null,
   });
 
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
@@ -26,8 +26,8 @@ const TripCreationScreen = ({ navigation }) => {
   const validationSchema = yup.object().shape({
     tripName: yup.string().required('Trip Name is required'),
     destination: yup.string().required('Destination is required'),
-    startDate: yup.date().nullable(), // Allow null value
-    endDate: yup.date().nullable(), // Allow null value
+    startDate: yup.date().nullable(),
+    endDate: yup.date().nullable(),
   });
 
   const createTrip = async () => {
@@ -46,14 +46,15 @@ const TripCreationScreen = ({ navigation }) => {
       // Get the user's UID
       const userUid = user.uid;
 
-      // Get a reference to the Firestore collection for the user's trips using their UID
-      const tripsCollection = firestore().collection(`users/${userUid}/trips`);
+      // Reference to the Firestore collection for trips
+      const tripsCollection = firestore().collection('trips');
 
       // Add the trip document to Firestore
       await tripsCollection.add({
         ...tripData,
         startDate: tripData.startDate ? tripData.startDate.toISOString() : null,
         endDate: tripData.endDate ? tripData.endDate.toISOString() : null,
+        userId: userUid,
       });
 
       // Clear the form data after successfully adding the trip
