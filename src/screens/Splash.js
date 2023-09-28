@@ -1,15 +1,9 @@
-import React, { useEffect } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { Image, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import colors from '../global/colors';
 
-const Splash = () => {
-    const navigation = useNavigation();
+const Splash = ({ initializing }) => {
 
-    useEffect(() => {
-        setTimeout(() => {
-            navigation.replace('Login');
-        }, 3000);
-    }, [])
     return (
         <View style={styles.container}>
             <Image
@@ -17,6 +11,7 @@ const Splash = () => {
                 style={styles.logo}
             />
             <Text style={styles.text}>Travel with Ease, Plan with Pleasure</Text>
+            {initializing && <ActivityIndicator size="large" />}
         </View>
     );
 };
@@ -26,14 +21,14 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#353935',
+        backgroundColor: colors.background,
     },
     text: {
         fontSize: 14,
         fontWeight: 'bold',
-        color:'#F0F0F0',
-        textAlign:'center',
-        marginTop:10,
+        color: colors.primary,
+        textAlign: 'center',
+        marginTop: 10,
         fontStyle: 'italic',
     },
     logo: {
