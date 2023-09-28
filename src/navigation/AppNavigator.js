@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator , CardStyleInterpolators, TransitionPresets  } from '@react-navigation/stack';
 import { useSelector, useDispatch } from 'react-redux';
 import auth from '@react-native-firebase/auth';
 
@@ -9,6 +9,7 @@ import LoginSignupScreen from '../screens/LoginSignupScreen';
 import HomeScreen from '../screens/HomeScreen';
 import colors from '../global/colors';
 import { removeUserTokenData, setUserTokenData } from '../store/slice/AuthSlice';
+import TripCreationScreen from '../screens/TripCreationScreen';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,15 @@ function AppStack() {
             <Stack.Screen name="Home" component={HomeScreen} options={{
                 headerShown: false,
                 title: 'Trip Planner',
+            }} />
+            <Stack.Screen name="CreateTrip" component={TripCreationScreen} options={{
+                title: 'New Trip',
+                headerStyle:{
+                    backgroundColor:colors.primary,
+                },
+                headerTitleAlign:'center',
+                ...TransitionPresets.ModalSlideFromBottomIOS,
+                headerTintColor:colors.background
             }} />
         </Stack.Navigator>
     );
