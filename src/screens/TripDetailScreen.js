@@ -1,21 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useFocusEffect } from '@react-navigation/native';
 import { FAB } from 'react-native-paper';
 import colors from '../global/colors';
 import { format } from 'date-fns';
+import firestore from '@react-native-firebase/firestore';
+import TaskCard from '../components/TaskCard';
 
 const TripDetailScreen = ({ navigation }) => {
   const route = useRoute();
   const trip = route.params.trip;
-
   const [tasks, setTasks] = useState([]);
+
+
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchTasks = async () => {
+        const fetchedTasks = await getTasksForTrip(trip.id);
+        setTasks(fetchedTasks);
+      };
+
+      fetchTasks();
+    }, [trip.id])
+  );
+
+
+
 
   // Function to navigate to the "Add Task" screen
   const navigateToAddTask = () => {
     // Navigate to the screen where users can add tasks
     navigation.navigate('AddTask', { trip: trip });
   };
+
+
+
+
+  // Function to fetch tasks for a specific trip
+  const getTasksForTrip = async (tripID) => {
+    try {
+      const tasksCollection = firestore().collection('tasks');
+      const querySnapshot = await tasksCollection.where('tripID', '==', tripID).get();
+
+      const tasks = [];
+
+      querySnapshot.forEach((documentSnapshot) => {
+        const taskData = documentSnapshot.data();
+        tasks.push({
+          id: documentSnapshot.id,
+          taskName: taskData.taskName,
+          taskDate: taskData.taskDate,
+          taskTime: taskData.taskTime,
+          taskDescription: taskData.taskDescription,
+          isCompleted: taskData.isCompleted,
+        });
+      });
+
+      return tasks;
+    } catch (error) {
+      console.log('Error fetching tasks:', error);
+      return [];
+    }
+  };
+
+
+  // Function to delete a task from Firestore
+  const deleteTask = useCallback(async (taskId) => {
+    try {
+      const taskRef = firestore().collection('tasks').doc(taskId);
+      await taskRef.delete();
+
+      // Update the tasks state by removing the deleted task
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  }, []);
+
+  // Function to mark a task as complete in Firestore
+  const markTaskAsComplete = useCallback(async (taskId) => {
+    try {
+      const taskRef = firestore().collection('tasks').doc(taskId);
+      await taskRef.update({ isCompleted: true });
+
+      // Update the tasks state by mapping through the tasks and updating isCompleted
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === taskId ? { ...task, isCompleted: true } : task
+        )
+      );
+    } catch (error) {
+      console.error('Error marking task as complete:', error);
+    }
+  }, []);
+
 
   // Render the header section of the FlatList
   const renderListHeader = () => {
@@ -26,8 +105,8 @@ const TripDetailScreen = ({ navigation }) => {
           <Text style={styles.tripName}>{trip.tripName}</Text>
           <Text style={styles.tripDescription}>-{trip.destination}-</Text>
           <View style={styles.dateContainer}>
-            <Text>Start Date : {trip.startDate && format(new Date(trip.startDate), 'dd MMM yy')}</Text>
-            <Text>End Date  : {trip.endDate && format(new Date(trip.endDate), 'dd MMM yy')}</Text>
+            <Text>Start Date : {trip.startDate && format(new Date(trip.startDate), 'dd MMM yy') || 'N/A'}</Text>
+            <Text>End Date  : {trip.endDate && format(new Date(trip.endDate), 'dd MMM yy') || 'N/A'}</Text>
           </View>
         </View>
         {/* Display tasks header */}
@@ -38,22 +117,17 @@ const TripDetailScreen = ({ navigation }) => {
     );
   };
 
+
   // Render each item in the FlatList
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={() => handleTaskPress(item)}>
-        {/* Display task information */}
-        <Text>{item.taskName}</Text>
-        {/* Display other task details */}
-      </TouchableOpacity>
+      <TaskCard
+        task={item}
+        deleteTask={deleteTask}
+        markTaskAsComplete={markTaskAsComplete}
+      />
     );
   };
-
-  // Function to handle task press 
-  const handleTaskPress = (task) => {
-
-  };
-
   return (
     <View style={styles.container}>
       <FlatList
@@ -61,6 +135,7 @@ const TripDetailScreen = ({ navigation }) => {
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={renderListHeader}
         renderItem={renderItem}
+        contentContainerStyle={{paddingBottom:80}}
       />
       {/* Floating Action Button for adding tasks */}
       <FAB

@@ -36,7 +36,7 @@ const RecommendedPlaces = () => {
     };
 
     // Fetch recommended places when the component mounts
-    fetchRecommendedPlaces();
+    // fetchRecommendedPlaces();
   }, [page]);
 
   return (
