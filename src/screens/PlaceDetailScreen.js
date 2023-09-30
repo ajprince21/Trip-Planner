@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Linking, ScrollView, Dimensions, Animated, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Linking, ScrollView, Dimensions, Alert } from 'react-native';
 import { getPlacePhotos } from '../global/getPlacePhotos';
 import colors from '../global/colors';
 
@@ -17,13 +17,13 @@ const PlaceDetailScreen = ({ route, navigation }) => {
                 setPhotos(fetchedPhotos);
             })
             .catch((error) => {
-                Alert.alert('Error fetching place photos', error)
+                Alert.alert('Error fetching place photos')
             });
     }, [place.place_id]);
 
     useEffect(() => {
         let interval;
-    
+
         if (photos.length > 1) {
             interval = setInterval(() => {
                 if (activeIndex === photos.length - 1) {
@@ -39,12 +39,12 @@ const PlaceDetailScreen = ({ route, navigation }) => {
                 }
             }, 3000);
         }
-    
+
         return () => {
             clearInterval(interval);
         };
     }, [activeIndex, photos]);
-    
+
 
     useEffect(() => {
         navigation.setOptions({
@@ -139,11 +139,11 @@ const styles = StyleSheet.create({
     },
     card: {
         overflow: 'hidden',
-        width:screenWidth,
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:colors.background,
-        padding:10
+        width: screenWidth,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.background,
+        padding: 10
     },
     dot: {
         backgroundColor: colors.grey1,
@@ -160,9 +160,9 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     image: {
-        width: screenWidth*0.85,
+        width: screenWidth * 0.85,
         height: 200,
-        borderRadius:10
+        borderRadius: 10
 
     },
     noImagesText: {
@@ -178,10 +178,12 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 8,
+        color: colors.secondaryButtonTxt
     },
     address: {
-        fontSize: 18,
+        fontSize: 16,
         marginBottom: 8,
+        color: colors.greenLight
     },
     ratingContainer: {
         flexDirection: 'row',
@@ -191,13 +193,16 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginRight: 4,
+        color: colors.secondaryButtonTxt
     },
     rating: {
         fontSize: 18,
+        color: colors.grey1
     },
     userRatings: {
         fontSize: 16,
         marginTop: 8,
+        color: colors.grey1
     },
     directionsButton: {
         backgroundColor: colors.primary,

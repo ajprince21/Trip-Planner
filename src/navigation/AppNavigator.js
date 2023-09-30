@@ -87,12 +87,11 @@ const AppNavigator = () => {
             } else {
                 dispatch(removeUserTokenData());
             }
-            if (initializing) setInitializing(false);
+            setTimeout(() => {
+                if (initializing) setInitializing(false);
+            }, 2000);
+            
         });
-        setTimeout(() => {
-            setInitializing(false);
-        }, 2000);
-
         return () => subscriber();
     }, []);
 

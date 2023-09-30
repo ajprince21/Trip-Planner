@@ -47,6 +47,12 @@ const HomeScreen = ({ navigation }) => {
     fetchTrips();
   }, [fetchTrips]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchTrips();
+    }, [navigation])
+  );
+
   const navigateToCreateTrip = () => {
     navigation.navigate('CreateTrip');
   };

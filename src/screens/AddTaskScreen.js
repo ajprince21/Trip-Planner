@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { TextInput, Button, IconButton, Snackbar } from 'react-native-paper';
+import { TextInput, Button, Snackbar } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import firestore from '@react-native-firebase/firestore';
@@ -8,7 +8,6 @@ import colors from '../global/colors';
 
 const AddTaskScreen = ({ route, navigation }) => {
     const { trip } = route.params;
-    console.log('Printing trip', trip);
 
     const [formData, setFormData] = useState({
         taskName: '',
@@ -107,7 +106,7 @@ const AddTaskScreen = ({ route, navigation }) => {
             <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                 <View style={styles.dateContainer}>
                     <Icon name="event" size={24} color={colors.primary} />
-                    <Text style={{ paddingLeft: 10 }}>{formData.taskDate ? formData.taskDate.toLocaleDateString() : 'Select Date'}</Text>
+                    <Text style={{ paddingLeft: 10, color: colors.grey1, }}>{formData.taskDate ? formData.taskDate.toLocaleDateString() : 'Select Date'}</Text>
                 </View>
             </TouchableOpacity>
             {showDatePicker && (
@@ -122,7 +121,7 @@ const AddTaskScreen = ({ route, navigation }) => {
             <TouchableOpacity onPress={() => setShowTimePicker(true)}>
                 <View style={styles.dateContainer}>
                     <Icon name="access-time" size={24} color={colors.primary} />
-                    <Text style={{ paddingLeft: 10 }}>{formData.taskTime ? formData.taskTime.toLocaleTimeString() : 'Select Time'}</Text>
+                    <Text style={{ paddingLeft: 10, color: colors.grey1, }}>{formData.taskTime ? formData.taskTime.toLocaleTimeString() : 'Select Time'}</Text>
                 </View>
             </TouchableOpacity>
             {showTimePicker && (
@@ -140,14 +139,15 @@ const AddTaskScreen = ({ route, navigation }) => {
                 style={styles.input}
                 multiline={true}
             />
-            <Button
-                mode="contained"
-                style={styles.addButton}
-                onPress={handleAddTask}
-                labelStyle={styles.buttonText}
-            >
-                Add Task
-            </Button>
+            <View>
+                <Button
+                    mode="contained-tonal"
+                    onPress={handleAddTask}
+                    labelStyle={styles.buttonText}f
+                >
+                    Add Task
+                </Button>
+            </View>
             <Snackbar
                 visible={snackbarVisible}
                 onDismiss={() => setSnackbarVisible(false)}
@@ -184,9 +184,10 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 8,
         alignItems: 'center',
+        width:'100%'
     },
     buttonText: {
-        color: 'white',
+        color: colors.primary,
         fontWeight: 'bold',
     },
 });

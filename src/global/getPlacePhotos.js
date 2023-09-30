@@ -26,7 +26,7 @@ export async function getPlacePhotos(placeId) {
             };
         });
     } catch (error) {
-        console.error('Error fetching place photos:', error);
+        console.log('Error fetching place photos:', error);
         return [];
     }
 }

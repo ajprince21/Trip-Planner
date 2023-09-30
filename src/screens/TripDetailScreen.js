@@ -1,31 +1,34 @@
 import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useRoute, useFocusEffect } from '@react-navigation/native';
+import { useRoute, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { FAB } from 'react-native-paper';
 import colors from '../global/colors';
 import firestore from '@react-native-firebase/firestore';
 import TaskCard from '../components/TaskCard';
 import NearbyPlaces from '../components/NearbyPlaces';
 
-const TripDetailScreen = ({ navigation }) => {
+const TripDetailScreen = () => {
+  const navigation = useNavigation();
   const route = useRoute();
   const trip = route.params.trip;
   const [tasks, setTasks] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
-
+  const fetchTasks = async () => {
+    const fetchedTasks = await getTasksForTrip(trip.id);
+    setTasks(fetchedTasks);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      const fetchedTasks = await getTasksForTrip(trip.id);
-      setTasks(fetchedTasks);
-      setLoading(false);
-    };
-
     fetchTasks();
-  }, [trip.id, navigation]);
+  }, [trip.id]);
 
-
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchTasks();
+    }, [trip.id, navigation])
+  );
 
 
   useLayoutEffect(() => {

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { apiKey } from './apiKey';
+import { Alert } from 'react-native';
 
 // Function to fetch recommended places
 export const fetchRecommendedPlaces = async (destination) => {
@@ -14,11 +15,11 @@ export const fetchRecommendedPlaces = async (destination) => {
             const places = response.data.results;
             return places;
         } else {
-            console.log('Error fetching recommended places:', response.data.status);
+            Alert.alert('Error fetching recommended places:', response.data.status);
             return [];
         }
     } catch (error) {
-        console.log('Error fetching recommended places:', error);
+        Alert.alert('Error fetching recommended places:', error);
         return [];
     }
 };

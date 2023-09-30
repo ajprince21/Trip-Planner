@@ -20,6 +20,3 @@ const App = () => {
 }
 
 export default App
-
-
-// AIzaSyCezzYp8N0_NWP2o8No1teKG-vNKwZMEGs
