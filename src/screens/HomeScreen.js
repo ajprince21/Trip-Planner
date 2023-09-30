@@ -1,13 +1,14 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { FAB } from 'react-native-paper';
 import HomeHeader from '../components/HomeHeader';
 import colors from '../global/colors';
 import CreatedTrips from '../components/CreatedTrips';
-import RecommendedPlaces from '../components/RecommendedPlaces';
 import { useFocusEffect } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import NearbyPlaces from '../components/NearbyPlaces';
+import CraftedMessage from '../components/CraftedMessage';
 
 const HomeScreen = ({ navigation }) => {
   const [recentlyCreatedTrips, setRecentlyCreatedTrips] = useState([]);
@@ -42,9 +43,9 @@ const HomeScreen = ({ navigation }) => {
     }
   }, []);
 
-  useFocusEffect(() => {
+  useEffect(() => {
     fetchTrips();
-  });
+  }, [fetchTrips]);
 
   const navigateToCreateTrip = () => {
     navigation.navigate('CreateTrip');
@@ -55,7 +56,8 @@ const HomeScreen = ({ navigation }) => {
       <HomeHeader appName={'Trip Planner'} />
       <ScrollView>
         <CreatedTrips recentlyCreatedTrips={recentlyCreatedTrips} />
-        <RecommendedPlaces />
+        <NearbyPlaces heading={'Top Places'} destination={'Top Places'} />
+        <CraftedMessage />
       </ScrollView>
       <FAB
         style={styles.fab}

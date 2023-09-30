@@ -6,17 +6,19 @@ import TripCard from './TripCard ';
 const CreatedTrips = ({ recentlyCreatedTrips }) => {
     return (
         <View style={styles.container}>
-            <Text style={styles.heading}>Recently Created Trips</Text>
+            <Text style={styles.heading}>Added Trips</Text>
             <FlatList
                 data={recentlyCreatedTrips}
                 keyExtractor={(item) => item.id}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => <TripCard trip={item} />}
+                ListEmptyComponent={
+                    <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyText}>No Trips found</Text>
+                    </View>
+                }
             />
-            {recentlyCreatedTrips?.length === 0 && (
-                <Text style={{ padding: 8, textAlign: 'center' }}>No Trip created!</Text>
-            )}
         </View>
     );
 };
@@ -33,6 +35,18 @@ const styles = StyleSheet.create({
         width: '100%',
         padding: 8,
         color: colors.placeholderText,
+    },
+    emptyContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf:'center',
+       
+    },
+    emptyText: {
+        color: 'grey',
+        textAlign: 'center',
+        padding:10,
+        width:'100%'
     },
 });
 

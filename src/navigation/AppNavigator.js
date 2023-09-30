@@ -12,6 +12,7 @@ import { removeUserTokenData, setUserTokenData } from '../store/slice/AuthSlice'
 import TripCreationScreen from '../screens/TripCreationScreen';
 import TripDetailScreen from '../screens/TripDetailScreen';
 import AddTaskScreen from '../screens/AddTaskScreen';
+import PlaceDetailScreen from '../screens/PlaceDetailScreen';
 
 const Stack = createStackNavigator();
 
@@ -50,6 +51,15 @@ function AppStack() {
             }} />
              <Stack.Screen name="AddTask" component={AddTaskScreen} options={{
                 title: 'Add Task',
+                headerStyle: {
+                    backgroundColor: colors.primary,
+                },
+                headerTitleAlign: 'left',
+                ...TransitionPresets.SlideFromRightIOS,
+                headerTintColor: colors.background
+            }} />
+             <Stack.Screen name="PlaceDetail" component={PlaceDetailScreen} options={{
+                title: 'Place Detail',
                 headerStyle: {
                     backgroundColor: colors.primary,
                 },

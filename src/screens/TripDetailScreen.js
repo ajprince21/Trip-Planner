@@ -1,36 +1,44 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRoute, useFocusEffect } from '@react-navigation/native';
 import { FAB } from 'react-native-paper';
 import colors from '../global/colors';
-import { format } from 'date-fns';
 import firestore from '@react-native-firebase/firestore';
 import TaskCard from '../components/TaskCard';
+import NearbyPlaces from '../components/NearbyPlaces';
 
 const TripDetailScreen = ({ navigation }) => {
   const route = useRoute();
   const trip = route.params.trip;
   const [tasks, setTasks] = useState([]);
+  const [isLoading, setLoading] = useState(true);
 
 
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchTasks = async () => {
-        const fetchedTasks = await getTasksForTrip(trip.id);
-        setTasks(fetchedTasks);
-      };
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const fetchedTasks = await getTasksForTrip(trip.id);
+      setTasks(fetchedTasks);
+      setLoading(false);
+    };
 
-      fetchTasks();
-    }, [trip.id])
-  );
+    fetchTasks();
+  }, [trip.id, navigation]);
+
+
+
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: trip.tripName,
+    });
+  }, [trip.tripName, navigation]);
 
 
 
 
   // Function to navigate to the "Add Task" screen
   const navigateToAddTask = () => {
-    // Navigate to the screen where users can add tasks
     navigation.navigate('AddTask', { trip: trip });
   };
 
@@ -61,6 +69,8 @@ const TripDetailScreen = ({ navigation }) => {
     } catch (error) {
       console.log('Error fetching tasks:', error);
       return [];
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -100,15 +110,7 @@ const TripDetailScreen = ({ navigation }) => {
   const renderListHeader = () => {
     return (
       <View>
-        {/* Display trip details */}
-        <View style={styles.tripDetailsContainer}>
-          <Text style={styles.tripName}>{trip.tripName}</Text>
-          <Text style={styles.tripDescription}>-{trip.destination}-</Text>
-          <View style={styles.dateContainer}>
-            <Text>Start Date : {trip.startDate && format(new Date(trip.startDate), 'dd MMM yy') || 'N/A'}</Text>
-            <Text>End Date  : {trip.endDate && format(new Date(trip.endDate), 'dd MMM yy') || 'N/A'}</Text>
-          </View>
-        </View>
+
         {/* Display tasks header */}
         <View style={styles.tasksHeader}>
           <Text style={styles.tasksHeaderText}>Tasks</Text>
@@ -130,12 +132,27 @@ const TripDetailScreen = ({ navigation }) => {
   };
   return (
     <View style={styles.container}>
+      <View>
+        <NearbyPlaces heading={`Nearby places (${trip.destination})`} destination={trip.destination} />
+      </View>
+
       <FlatList
         data={tasks}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={renderListHeader}
         renderItem={renderItem}
-        contentContainerStyle={{paddingBottom:80}}
+        contentContainerStyle={{ paddingBottom: 80 }}
+        ListEmptyComponent={
+          isLoading
+            ? (
+              <View style={{ alignItems: 'center', padding: 10 }}>
+                <ActivityIndicator />
+                <Text>Getting Task</Text>
+              </View>
+            )
+            : (
+              <Text style={{ fontSize: 14, textAlign: 'center', margin: 10, color: colors.grey1 }}>No task added!! </Text>
+            )}
       />
       {/* Floating Action Button for adding tasks */}
       <FAB
@@ -200,7 +217,6 @@ const styles = StyleSheet.create({
   tasksHeader: {
     backgroundColor: colors.dividerLine,
     padding: 8,
-    marginTop: 10,
     width: '100%',
   },
   tasksHeaderText: {

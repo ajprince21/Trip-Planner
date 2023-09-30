@@ -20,7 +20,7 @@ const TripCard = ({ trip }) => {
                 <Text style={styles.dateRange}>
                     {format(new Date(startDate), "dd MMM yy")} - {format(new Date(endDate), "dd MMM yy")}
                 </Text>
-                : <Text>Dates not available</Text>
+                : <Text style={styles.dateRange}>Dates not available</Text>
             }
         </TouchableOpacity>
     );
