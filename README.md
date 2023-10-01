@@ -1,10 +1,12 @@
 # Trip Planner App
 
-![App Images](src/images/01.jpg)
-![App Images](src/images/02.jpg)
-![App Images](src/images/03.jpg)
-![App Images](src/images/04.jpg)
-![App Images](src/images/05.jpg)
+| Image 1 | Image 2 | Image 3 |
+| ------- | ------- | ------- |
+| ![Image 1](src/images/01.jpg) | ![Image 2](src/images/02.jpg) | ![Image 3](src/images/03.jpg) |
+| Image 4 | Image 5 | Image 6 |
+| ------- | ------- | ------- |
+| ![Image 4](src/images/04.jpg) | ![Image 5](src/images/05.jpg) | 
+
 
 This is a new [**React Native**](https://reactnative.dev) project named **Trip Planner**. 
 
