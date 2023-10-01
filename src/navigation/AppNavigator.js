@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators, TransitionPresets } from '@react-navigation/stack';
 import { useSelector, useDispatch } from 'react-redux';
 import auth from '@react-native-firebase/auth';
+import NetInfo from '@react-native-community/netinfo';
 
 import Splash from '../screens/Splash';
 import LoginSignupScreen from '../screens/LoginSignupScreen';
@@ -13,6 +14,7 @@ import TripCreationScreen from '../screens/TripCreationScreen';
 import TripDetailScreen from '../screens/TripDetailScreen';
 import AddTaskScreen from '../screens/AddTaskScreen';
 import PlaceDetailScreen from '../screens/PlaceDetailScreen';
+import { setNetworkStatus } from '../store/slice/networkSlice';
 
 const Stack = createStackNavigator();
 
@@ -49,7 +51,7 @@ function AppStack() {
                 ...TransitionPresets.SlideFromRightIOS,
                 headerTintColor: colors.background
             }} />
-             <Stack.Screen name="AddTask" component={AddTaskScreen} options={{
+            <Stack.Screen name="AddTask" component={AddTaskScreen} options={{
                 title: 'Add Task',
                 headerStyle: {
                     backgroundColor: colors.primary,
@@ -58,7 +60,7 @@ function AppStack() {
                 ...TransitionPresets.SlideFromRightIOS,
                 headerTintColor: colors.background
             }} />
-             <Stack.Screen name="PlaceDetail" component={PlaceDetailScreen} options={{
+            <Stack.Screen name="PlaceDetail" component={PlaceDetailScreen} options={{
                 title: 'Place Detail',
                 headerStyle: {
                     backgroundColor: colors.primary,
@@ -76,6 +78,18 @@ const AppNavigator = () => {
     const dispatch = useDispatch();
     const [initializing, setInitializing] = useState(true);
 
+
+    useEffect(() => {
+        // Add a listener for network connectivity changes
+        const unsubscribe = NetInfo.addEventListener((state) => {
+            dispatch(setNetworkStatus(state.isConnected))
+        });
+
+        return () => {
+            unsubscribe(); // Clean up the network connectivity listener
+        };
+    }, []);
+
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged((user) => {
             if (user) {
@@ -90,7 +104,7 @@ const AppNavigator = () => {
             setTimeout(() => {
                 if (initializing) setInitializing(false);
             }, 2000);
-            
+
         });
         return () => subscriber();
     }, []);

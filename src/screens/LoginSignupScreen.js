@@ -6,9 +6,12 @@ import auth from '@react-native-firebase/auth';
 import colors from '../global/colors';
 import Loading from '../components/Loading';
 import logo from '../images/tripPlannerlogo.png';
+import OfflineNotice from '../components/OfflineNotice';
+import { useSelector } from 'react-redux';
 
 const LoginSignupScreen = () => {
     const navigation = useNavigation();
+    const networkStatus = useSelector((state) => state.network.isConnected);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSignup, setIsSignup] = useState(false); // For toggling between sign up and login
@@ -81,6 +84,7 @@ const LoginSignupScreen = () => {
 
     return (
         <View style={styles.container}>
+            <OfflineNotice />
             <Image source={logo} style={styles.logo} />
             <Text style={styles.title}>
                 {isSignup ? 'Sign Up for Trip Planner' : 'Welcome back to Trip Planner'}
@@ -112,6 +116,7 @@ const LoginSignupScreen = () => {
                 mode="contained"
                 style={styles.authButton}
                 onPress={handleAuthentication}
+                disabled={!networkStatus}
             >
                 {isSignup ? 'Sign Up' : 'Login'}
             </Button>
@@ -139,7 +144,6 @@ const LoginSignupScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
         padding: 16,
         backgroundColor: colors.background,
